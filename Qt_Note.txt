@@ -1,0 +1,35 @@
+1. QML基础
+	(1) QML 文件必须以类名形式命名文件，首字母大写 如 Test.qml
+	(2) QML 文件相互之间相互引用(直接使用文件名实例化)不需要通过 import 导入，前提在同一目录（非同一目录需要 import “目录名称”)
+	(3) QML 文件需要导入 xxx.qrc 资源文件件统一管理(Webex 中 momentum.qrc, qml.qrc)
+
+2. Qt C++ 和 QML 中 signals/slots机制
+ 2.1. C++ 类中的signal/slots
+	(1)QObject 子类 ;  (2)注明 Q_OBJECT;  (3)信号用 signals: 槽用 private/publice slots;  (4)连接 connect();
+ 2.2.  QML 中的signal/slots
+	(1)使用`connect`， singal_func.connect(slot_func)
+    (2)使用`Connections{}`，另外需要将singals函数名首字母大写并在前面加`on`作为slots函数名，并实现该函数即可
+	
+3.QML 与 C++ 相互调用
+	(0) 定义可注册为qml类型的C++类
+		可用属性 Q_PROPERTY(UpgradeStatus listUpgradeStatus READ listUpgradeStatus WRITE setListUpgradeStatus NOTIFY listUpgradeStatusChanged)
+		
+	(1) C++类类型注册为qml类型    
+			[1] 可实例化类型
+			qmlRegisterType<AccessoriesMultiUpgradeModel>("AccessoriesMultiUpgrade", 1, 0, "AccessoriesMultiUpgradeModel");
+			[2]  不可实例化类型
+			qmlRegisterUncreatableType<AccessoriesMultiUpgradeList>("AccessoriesMultiUpgrade", 1, 0, "AccessoriesMultiUpgradeList",
+				QStringLiteral("AccessoriesMultiUpgradeList should not be created in Qml"));
+			engine.rootContext()->setContextProperty(QStringLiteral("accessoriesMultiUpgradeList"), &accessoriesMultiUpgradeList);
+	(2) QML 调用 C++ 函数
+		C++类中需要实现 `public slots:` 的槽函，qml直接调用，通过sinal/slots机制，调到C++函数实现
+		accessoriesMultiUpgradeList.startUpgradeDevices()
+	(3) C++ 调用 QML 函数
+		C++类中需要有对应的signal函数 `listUpgradeStatusChanged`
+		Connections {
+			target: accessoriesMultiUpgradeList
+			function onListUpgradeStatusChanged () { //listUpgradeStatusChanged 对应的函数名需要变为 onListUpgradeStatusChanged
+				...
+			}
+		}
+		

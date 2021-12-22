@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>sk_730.png</file>
+        <file>test_mobile_feature.qml</file>
+        <file>ToastPage.qml</file>
+        <file>ToastHeader.qml</file>
+        <file>close_window_image.png</file>
+    </qresource>
+</RCC>
